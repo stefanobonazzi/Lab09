@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -59,7 +60,7 @@ public class FXMLController {
     		return;
     	}
     	
-    	Graph<Country, DefaultEdge> graph = model.createGraph(year);
+    	model.createGraph(year);
     	List<Country> countries = this.model.getCountries();
     	Collections.sort(countries);
     	
@@ -67,11 +68,24 @@ public class FXMLController {
     		txtResult.appendText(c+" \t "+c.getGrade()+"\n");
     	}
     	
+    	txtResult.appendText("Componenti connesse = "+model.getNumberOfConnectedComponents());
+    	
     }
 
     @FXML
     void doStatiRaggiungibili(ActionEvent event) {
-
+    	txtResult.setText("");
+    	Country country = cmbStati.getValue();
+    	
+    	Set<Country> set = this.model.getPath(country);
+    	if (set == null) {
+    		txtResult.setText("Inserisci un Paese che sia presente nel grafo!");
+    		return;
+		}
+    	
+    	for(Country c: set) {
+    		txtResult.appendText(c+"\n");
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete

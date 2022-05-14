@@ -4,8 +4,11 @@ import java.util.*;
 
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
+import org.jgrapht.traverse.DepthFirstIterator;
+
 import it.polito.tdp.borders.db.BordersDAO;
 
 public class Model {
@@ -55,7 +58,12 @@ public class Model {
 	}
 	
 	public int getNumberOfConnectedComponents() {
-		return 0;
+		ConnectivityInspector<Country, DefaultEdge> inspector = new ConnectivityInspector<>(this.graph);
+		int n = 0;
+		List<Set<Country>> set = inspector.connectedSets();
+		n = set.size();
+		
+		return n;
 	}
 	
 	public List<Country> getCountries() {
@@ -65,4 +73,19 @@ public class Model {
 	public Map<Country, Integer> getCountryCounts() {
 		return null;
 	}
+	
+	public Set<Country> getPath(Country country) {
+		Set<Country> set = new HashSet<>();
+		if(!this.graph.containsVertex(country)) 
+			return null;
+		
+		DepthFirstIterator<Country, DefaultEdge> iterator = new DepthFirstIterator<>(this.graph, country);
+		
+		while (iterator.hasNext()) {
+			set.add(iterator.next());
+		}
+		
+		return set;
+	}
+	
 }
